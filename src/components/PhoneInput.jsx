@@ -11,10 +11,21 @@ const PhoneInput = ({ phone, onPhoneChange }) => {
     setOpenContacts(false);
   };
 
+  // Obtener contactos del sistema
+  const fetchContacts = () => {
+    if (window.iosContacts) {
+      const contacts = JSON.parse(window.iosContacts);
+      const selectedPhone = contacts[0].phone;
+      handleContactSelection(selectedPhone);
+    } else {
+      alert('La API de contactos no está disponible en este navegador.');
+    }
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
-      alignItems: 'center',
+      alignItems: 'center', 
       backgroundColor: 'background.paper',
       p: 2,
       borderRadius: 1,
@@ -36,15 +47,8 @@ const PhoneInput = ({ phone, onPhoneChange }) => {
       
       {/* Botón para abrir los contactos */}
       <IconButton onClick={() => {
-        if (navigator.contacts) {
-          navigator.contacts.pick((contacts) => {
-            if (contacts) {
-              handleContactSelection(contacts[0].tel[0].value);
-            }
-          });
-        } else {
-          alert('La API de contactos no está disponible en este navegador.');
-        }
+        fetchContacts();
+        setOpenContacts(true);
       }}>
         <ContactsIcon color="primary" />
       </IconButton>
